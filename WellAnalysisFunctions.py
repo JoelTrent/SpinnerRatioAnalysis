@@ -4,23 +4,6 @@ import pandas as pd
 from scipy.interpolate import CubicSpline
 from itertools import combinations
 
-"""
-    plot_fluidvel_and_ratio(spinner_dfs, 
-                            ratio_dfs,
-                            xlims_fluidvel,
-                            xlims_ratio,
-                            ylims,
-                            xlabels, 
-                            labels,
-                            subtitles,
-                            ylabel='Depth [m]',
-                            colormap='Paired',
-                            colorstartshift=0):
-
-Plot fluid velocity (spinner) data against depth from a stage or completion test on axe 0 and the ratio of these fluid velocity data on axe 1.
-
-Assumes that the first list of labels of `labels` in order correspond to the ordered spinner data sets in `spinner_dfs` and the second list of labels correspond to those in `ratio_dfs`.
-"""
 def plot_fluidvel_and_ratio(spinner_dfs, 
                             ratio_dfs,
                             xlims_fluidvel,
@@ -32,6 +15,13 @@ def plot_fluidvel_and_ratio(spinner_dfs,
                             ylabel='Depth [m]',
                             colormap='Paired',
                             colorstartshift=0):
+    """
+    Plot fluid velocity (spinner) data against depth from a stage or completion test on axe 0 and 
+    the ratio of these fluid velocity data on axe 1.
+
+    Assumes that the first list of labels of `labels` in order correspond to the ordered spinner 
+    data sets in `spinner_dfs` and the second list of labels correspond to those in `ratio_dfs`.
+    """
 
     fig, ax = plt.subplots(1, 2, figsize=(7,9), sharey=True)
     ax[0].invert_yaxis()
@@ -62,22 +52,6 @@ def plot_fluidvel_and_ratio(spinner_dfs,
 
     return fig, ax
 
-"""
-    plot_fluidvel(spinner_dfs, 
-                            ratio_dfs,
-                            xlims_fluidvel,
-                            xlims_ratio,
-                            ylims,
-                            xlabels,
-                            labels,
-                            subtitles,
-                            ylabel='Depth [m]',
-                            colormap='Paired'):
-
-Plot spinner frequencey data against depth from a stage or completion test on axe 0
-
-Assumes that the list of labels of `labels` in order correspond to the ordered spinner data sets in `spinner_dfs`.
-"""
 def plot_spinner(spinner_dfs,     
                     xlims_spinner,
                     ylims,
@@ -86,6 +60,12 @@ def plot_spinner(spinner_dfs,
                     subtitles,
                     ylabel='Depth [m]',
                     colormap='Paired'):
+    """
+    Plot spinner frequencey data against depth from a stage or completion test on axe 0
+
+    Assumes that the list of labels of `labels` in order correspond to the ordered spinner data 
+    sets in `spinner_dfs`.
+    """
 
     fig, ax = plt.subplots(1, 1, figsize=(8,10), sharey=True)
     ax.invert_yaxis()
@@ -112,17 +92,12 @@ def plot_spinner(spinner_dfs,
 
     return fig, ax
 
-"""
-    add_casing_to_plot(ax, 
-                        production_shoe, 
-                        top_of_liner, 
-                        terminal_depth,
-                        include_liner=True)
-
-Add the casing information to the `ax_index` contained in the list of axes, `ax`.
-"""
 def add_casing_to_plot(ax, production_shoe, top_of_liner, terminal_depth, 
                        ax_index=0, include_liner=True):
+    """
+    Add the casing information to the `ax_index` contained in the list of axes, `ax`.
+    """
+
     # blank well casing
     ax[ax_index].plot([-0.05, -0.05],[0, production_shoe],
         color = 'k', linewidth = 3, linestyle = 'solid', label = 'Casing')
@@ -135,38 +110,39 @@ def add_casing_to_plot(ax, production_shoe, top_of_liner, terminal_depth,
     ax[ax_index].legend(loc='upper right')
     return None
 
-"""
-    add_feedzone_to_plot(ax, start_depth, end_depth)
-
-Adds feedzone to every plot axis in `ax` between `start_depth` and `end_depth` as a grey box.
-"""
 def add_feedzone_to_plot(ax, start_depth, end_depth):
+    """
+    Adds feedzone to every plot axis in `ax` between `start_depth` and `end_depth` as a grey box
+    """
+
     for ax_i in ax:
         ax_i.axhspan(ymin=start_depth, ymax=end_depth, color = 'grey', alpha=.2)
     return None
 
-"""
-    add_feedzones_to_plot(ax, feedzones)
-
-Adds `feedzones` to every plot axis in `ax` between `start_depth` and `end_depth` as a grey box using `add_feedzone_to_plot`.
-
-`feedzones` is a list of lists containing the start and end depths for each zone, [[980, 990], [1123, 1128]].
-"""
 def add_feedzones_to_plot(ax, feedzones):
+    """
+    Adds `feedzones` to every plot axis in `ax` between `start_depth` and `end_depth` as a grey box 
+    using `add_feedzone_to_plot`
+
+    `feedzones` is a list of lists containing the start and end depths for each zone, [[980, 990], 
+    [1123, 1128]].
+    """
+
     for feedzone in feedzones:
         add_feedzone_to_plot(ax, feedzone[0], feedzone[1])
     return None
 
-"""
-    add_feedzone_labels_to_plot(ax, feedzones, labels)
-
-Adds a label to each shaded feed zone location created using `add_feedzones_to_plot` to every plot axis in `ax`.
-
-`feedzones` is a list of lists containing the start and end depths for each zone, [[980, 990], [1123, 1128]].
-
-`labels` is a list of strings, with equal length to `feedzones`, which are the label for each zone
-"""
 def add_feedzone_labels_to_plot(ax, feedzones, labels):
+    """
+    Adds a label to each shaded feed zone location created using `add_feedzones_to_plot` to every 
+    plot axis in `ax`.
+
+    `feedzones` is a list of lists containing the start and end depths for each zone, [[980, 990], 
+    [1123, 1128]].
+
+    `labels` is a list of strings, with equal length to `feedzones`, which are the label for each 
+    zone.
+    """
 
     if len(feedzones) != len(labels):
         raise IndexError("the length of feedzones must be the same as the length of labels")
@@ -177,13 +153,11 @@ def add_feedzone_labels_to_plot(ax, feedzones, labels):
                       bbox=dict(boxstyle="square", lw=1, fc="white", ec="black"))
     return None
 
-
-"""
-    add_ratio_to_plot(ax, ratio_df, start_depth, end_depth)
-
-Adds ratio to the second plot axis in `ax` between `start_depth` and `end_depth` as the mean of the ratio values between these depths in ratio_df
-"""
 def add_ratio_to_plot(ax, ratio_df, start_depth, end_depth):
+    """
+    Adds ratio to the second plot axis in `ax` between `start_depth` and `end_depth` as the mean of 
+    the ratio values between these depths in ratio_df
+    """
     
     ratio = ratio_df.loc[
         ratio_df["Depth"].apply(lambda x: x >= start_depth and x <= end_depth), "Ratio"].mean()
@@ -192,17 +166,6 @@ def add_ratio_to_plot(ax, ratio_df, start_depth, end_depth):
         
     return None
 
-"""
-    compute_depth_offset_lsq(depths_baseline,
-                            fluidvelocity_baseline,
-                            depths_comparison,
-                            spl_spin_comparison,
-                            mean_vel_comparison,
-                            search_range,
-                            step_size)
-
-Given a normalised baseline fluid velocity (its mean has been subtracted from it), evaluate and return the best depth offset for the compared fluid velocity profile (which we normalise) in the `search_range` using a least squares objective. 
-"""
 def compute_depth_offset_lsq(depths_baseline,
                             fluidvelocity_baseline,
                             depths_comparison,
@@ -210,6 +173,11 @@ def compute_depth_offset_lsq(depths_baseline,
                             mean_vel_comparison,
                             search_range,
                             step_size):
+    """
+    Given a normalised baseline fluid velocity (its mean has been subtracted from it), evaluate and 
+    return the best depth offset for the compared fluid velocity profile (which we normalise) in 
+    the `search_range` using a least squares objective. 
+    """
     
     offsets = np.arange(search_range[0], search_range[1]+step_size, step_size)
     objs = np.zeros(offsets.size)
@@ -223,22 +191,17 @@ def compute_depth_offset_lsq(depths_baseline,
 
     return best_offset
 
-"""
-    compute_depth_offset_variance(depths_baseline,
-                            fluidvelocity_baseline,
-                            depths_comparison,
-                            spl_spin_comparison,
-                            search_range,
-                            step_size)
-
-Given a baseline fluid velocity evaluate and return the best depth offset for the compared fluid velocity profile in the `search_range` by minimising the variance of the ratio between the two profiles. 
-"""
 def compute_depth_offset_variance(depths_baseline,
                             fluidvelocity_baseline,
                             depths_comparison,
                             spl_spin_comparison,
                             search_range,
                             step_size):
+    """
+    Given a baseline fluid velocity evaluate and return the best depth offset for the compared 
+    fluid velocity profile in the `search_range` by minimising the variance of the ratio between 
+    the two profiles. 
+    """
     
     offsets = np.arange(search_range[0], search_range[1]+step_size, step_size)
     objs = np.zeros(offsets.size)
@@ -251,30 +214,6 @@ def compute_depth_offset_variance(depths_baseline,
 
     return best_offset
 
-"""
-    compute_spinner_interpolations_and_offsets(spin_baseline, 
-                            spin_comparisons,
-                            comparison_range=None,
-                            comparison_type='lsq',
-                            search_range=[-5,5],
-                            step_size=0.1,
-                            min_depth=None,
-                            max_depth=None)
-
-`spin_comparisons` is required to be a list of spinner dataframes with depths sorted in ascending order of magnitude (i.e. index 0 is the shallowest depth and index -1 is the deepest depth).
-
-When `comparison_type` = 'lsq':
-- The offset is calculated by computing the least squares difference between a baseline normalised cubic spline and comparison spline for a set of offsets in the `search_range` (-5 to +5 metres) using `compute_depth_offset_lsq`. Normalised means that each profile has had its mean magnitude subtracted from it, so that differences in magnitude don't dominate the objective function. The extremities of both profiles related to the search range are ignored to enable a fair calculation of the objective, e.g. for `search_range=[-5,5]` we ignore the first and last 5 metres of data in the objective. If `comparison_range` is `None` then we make this comparison across the entire data range. Otherwise we only consider depth values within the comparison range.
-
-When `comparison_type` = 'variance':
-- The offset is calculated by minimising the variance of the ratio computed from the baseline and comparison spline for a set of offsets in the `search_range` (default -5 to +5 metres) using `compute_depth_offset_variance`. This should done for a `comparison_range` that is in a region with no feed zones. The extremities of both profiles related to the search range are ignored to enable a fair calculation of the objective, e.g. for `search_range=[-5,5]` we ignore the first and last 5 metres of data in the objective. If `comparison_range` is `None` then we make this comparison across the entire data range. Otherwise we only consider depth values within the comparison range. This is a slight update on the method used by Grant, Wilson & Bixley (2006).
-
-Recommend computing the offset relative to the first flow rate to mitigate for wireline stretch over the course of the stage/completion test.
-
-`step_size` is used for both the step size for computing the interpolated fluid velocity profiles at and the step size used for the depth offset within `search_range`. 
-
-Returns `baseline_df`, `comparison_dfs` and `best_offsets` where the `comparison_dfs` relate to the newly offset and interpolated versions of spin_comparisons. As a result the depths contained in `baseline_df` and each of the `comparison_dfs` may not be the same - this is done to make sure any data in each of the profiles at the end of the ranges is not cut off when visualising the plots. The function for calculating the ratios will compensate for this (`compute_ratio_dfs`).
-"""
 def compute_spinner_interpolations_and_offsets(spin_baseline, 
                             spin_comparisons,
                             search_range=[-5,5],
@@ -283,6 +222,46 @@ def compute_spinner_interpolations_and_offsets(spin_baseline,
                             step_size=0.1,
                             min_depth=None,
                             max_depth=None):
+    """
+    `spin_comparisons` is required to be a list of spinner dataframes with depths sorted in 
+    ascending order of magnitude (i.e. index 0 is the shallowest depth and index -1 is the deepest 
+    depth).
+
+    When `comparison_type` = 'lsq':
+    - The offset is calculated by computing the least squares difference between a baseline 
+    normalised cubic spline and comparison spline for a set of offsets in the `search_range` (-5 to 
+    +5 metres) using `compute_depth_offset_lsq`. Normalised means that each profile has had its 
+    mean magnitude subtracted from it, so that differences in magnitude don't dominate the 
+    objective function. The extremities of both profiles related to the search range are ignored to 
+    enable a fair calculation of the objective, e.g. for `search_range=[-5,5]` we ignore the first 
+    and last 5 metres of data in the objective. If `comparison_range` is `None` then we make this 
+    comparison across the entire data range. Otherwise we only consider depth values within the 
+    comparison range.
+
+    When `comparison_type` = 'variance':
+    - The offset is calculated by minimising the variance of the ratio computed from the baseline 
+    and comparison spline for a set of offsets in the `search_range` (default -5 to +5 metres) 
+    using `compute_depth_offset_variance`. This should done for a `comparison_range` that is in a 
+    region with no feed zones. The extremities of both profiles related to the search range are 
+    ignored to enable a fair calculation of the objective, e.g. for `search_range=[-5,5]` we ignore 
+    the first and last 5 metres of data in the objective. If `comparison_range` is `None` then we 
+    make this comparison across the entire data range. Otherwise we only consider depth values 
+    within the comparison range. This is a slight update on the method used by Grant, Wilson & 
+    Bixley (2006).
+
+    We recommend computing the offset relative to the first flow rate to mitigate for wireline 
+    stretch over the course of the stage/completion test.
+
+    `step_size` is used for both the step size for computing the interpolated fluid velocity 
+    profiles at and the step size used for the depth offset within `search_range`. 
+
+    Returns `baseline_df`, `comparison_dfs` and `best_offsets` where the `comparison_dfs` relate to 
+    the newly offset and interpolated versions of spin_comparisons. As a result the depths 
+    contained in `baseline_df` and each of the `comparison_dfs` may not be the same - this is done 
+    to make sure any data in each of the profiles at the end of the ranges is not cut off when 
+    visualising the plots. The function for calculating the ratios will compensate for this 
+    (`compute_ratio_dfs`).
+    """
 
     if type(spin_comparisons) is not list:
         raise TypeError("spin_comparisons must be a list. If you have only one spinner dataset, enclose it in brackets []")
@@ -371,12 +350,13 @@ def compute_spinner_interpolations_and_offsets(spin_baseline,
 
     return baseline_df, comparison_dfs, best_offsets
 
-"""
-    compute_ratio_dfs(spinner_dfs)
-
-`spinner_dfs` is a list of spinner dataframes each with fluid velocities recorded at the overlapping depths with the same values. Assumes that the spinner dataframes are in order of increasing injecting fluid velocity.
-"""
 def compute_ratio_dfs(spinner_dfs):
+    """
+    `spinner_dfs` is a list of spinner dataframes each with fluid velocities recorded at the 
+    overlapping depths with the same values. Assumes that the spinner dataframes are in order of 
+    increasing injecting fluid velocity.
+    """
+
     if len(spinner_dfs) < 2:
         raise TypeError("spinner_dfs must be a list containing dataframes from at least 2 fluid velocities")
     
