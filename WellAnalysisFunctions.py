@@ -363,7 +363,7 @@ def compute_ratio_dfs(spinner_dfs):
     dfs = []
     for combo in combinations(np.arange(0, len(spinner_dfs), 1), 2):
         df = pd.merge_asof(spinner_dfs[combo[0]], spinner_dfs[combo[1]], 
-                            on ='Depth', tolerance=0.001)
+                            on ='Depth', direction='nearest')
         df.dropna(inplace=True)
         df["Ratio"] = df["FluidVel_y"] / df["FluidVel_x"]
         dfs.append(df)
